@@ -9,6 +9,7 @@ import { CurrencyTypeModule } from './currency_type/currency_type.module';
 import { OrderModule } from './order/order.module';
 import { CurrencyType } from './currency_type/schemas/currency_type.model';
 import { Order } from './order/schemas/order.model';
+import { OperationModule } from './operation/operation.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { Order } from './order/schemas/order.model';
     AdminModule,
     CurrencyTypeModule,
     OrderModule,
+    OperationModule,
   ],
   controllers: [],
   providers: [],
