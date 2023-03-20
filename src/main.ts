@@ -11,7 +11,7 @@ async function start() {
 
   app.setGlobalPrefix('api');
   app.use(cookieParser());
-  // app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .addBearerAuth()
