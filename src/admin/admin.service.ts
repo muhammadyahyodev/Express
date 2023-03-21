@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { AuthAdminDto } from './dto/signin-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
@@ -16,7 +16,7 @@ import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectModel(Admin) private readonly adminRepositpory: typeof Admin,
+    @InjectModel(Admin) private readonly adminRepository: typeof Admin,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -26,7 +26,7 @@ export class AdminService {
 
     const hashedPassword = await bcrypt.hash(hashed_password, 7);
 
-    const admin = await this.adminRepositpory.create({
+    const admin = await this.adminRepository.create({
       ...createAdminDto,
       hashed_password: hashedPassword,
     });
@@ -51,7 +51,7 @@ export class AdminService {
   async signIn(authAdminDto: AuthAdminDto, res: Response) {
     const { username } = authAdminDto;
 
-    const admin = await this.adminRepositpory.findOne({ where: { username } });
+    const admin = await this.adminRepository.findOne({ where: { username } });
 
     if (!admin) {
       throw new UnauthorizedException('Admin mavjud emas');
@@ -83,13 +83,40 @@ export class AdminService {
     return tokens;
   }
 
+  async logout(req: Request, res: Response) {
+    const { refresh_token } = req.cookies;
+
+    if (!refresh_token) {
+      throw new UnauthorizedException(`Nomzod ro'yhatdan o'tmagan`);
+    }
+
+    const check = await this.jwtService.verify(refresh_token, {
+      publicKey: process.env.REFRESH_TOKEN_KEY,
+    });
+
+    const admin = await this.adminRepository.update(
+      { hashed_token: null },
+      {
+        where: { id: check.sub },
+        returning: true,
+      },
+    );
+
+    if (!admin[1][0]) {
+      throw new ForbiddenException('Siz tizimda emassiz');
+    }
+
+    res.clearCookie('refresh_token');
+    return true;
+  }
+
   async findAllAdmins() {
-    const admins = await this.adminRepositpory.findAll({});
+    const admins = await this.adminRepository.findAll({});
     return admins;
   }
 
   async findOneAdminById(id: number) {
-    const admin = await this.adminRepositpory.findByPk(id);
+    const admin = await this.adminRepository.findByPk(id);
 
     if (!admin) {
       throw new NotFoundException(`${id} id'ga ega admin mavjud emas`);
@@ -101,7 +128,7 @@ export class AdminService {
   async updateAdminById(id: number, updateAdminDto: UpdateAdminDto) {
     await this.findOneAdminById(id);
 
-    const admin = await this.adminRepositpory.update(updateAdminDto, {
+    const admin = await this.adminRepository.update(updateAdminDto, {
       where: { id },
       returning: true,
     });
@@ -111,13 +138,13 @@ export class AdminService {
 
   async deleteOneAdminById(id: number) {
     await this.findOneAdminById(id);
-    await this.adminRepositpory.destroy({ where: { id } });
+    await this.adminRepository.destroy({ where: { id } });
 
     return { message: `ID ${id}-ga teng bo'lgan admin mavjud emas` };
   }
 
   private async findAdminByName(username: string) {
-    const admin = await this.adminRepositpory.findOne({
+    const admin = await this.adminRepository.findOne({
       where: { username },
     });
 
@@ -159,7 +186,7 @@ export class AdminService {
   private async updateRefreshTokenHash(id: number, refreshToken: string) {
     const hashedToken = await bcrypt.hash(refreshToken, 7);
 
-    await this.adminRepositpory.update(
+    await this.adminRepository.update(
       { hashed_token: hashedToken },
       { where: { id } },
     );

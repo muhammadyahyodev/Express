@@ -8,6 +8,7 @@ import {
   Delete,
   Res,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -15,7 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
@@ -47,6 +48,13 @@ export class AdminController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.adminService.signIn(authAdminDto, res);
+  }
+
+  @ApiOperation({ summary: 'Tizimdan chiqish' })
+  @ApiResponse({ status: 200, type: [Admin] })
+  @Post('logout')
+  logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return this.adminService.logout(req, res);
   }
 
   @ApiOperation({ summary: `Barcha adminlarni qaytarish` })
