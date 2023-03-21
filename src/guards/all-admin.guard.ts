@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class CreatorAdminGuard implements CanActivate {
+export class AllAdminGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   canActivate(

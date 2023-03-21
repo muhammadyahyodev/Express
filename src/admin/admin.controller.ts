@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -15,6 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AdminGuard } from 'src/guards/admin.guard';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { AuthAdminDto } from './dto/signin-admin.dto';
@@ -28,7 +30,7 @@ export class AdminController {
 
   @ApiOperation({ summary: `Ro'yhatdan o'tish` })
   @ApiResponse({ status: 200, type: [Admin] })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @Post('signup')
   signUp(
     @Body() createAdminDto: CreateAdminDto,
@@ -39,7 +41,6 @@ export class AdminController {
 
   @ApiOperation({ summary: `Tizimga kirish` })
   @ApiResponse({ status: 200, type: [Admin] })
-  // @ApiBearerAuth()
   @Post('signin')
   signIn(
     @Body() authAdminDto: AuthAdminDto,
@@ -50,7 +51,8 @@ export class AdminController {
 
   @ApiOperation({ summary: `Barcha adminlarni qaytarish` })
   @ApiResponse({ status: 200, type: [Admin] })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
+  @UseGuards(CreateAdminDto)
   @Get()
   findAll() {
     return this.adminService.findAllAdmins();
@@ -58,7 +60,8 @@ export class AdminController {
 
   @ApiOperation({ summary: `Bitta admin'ni ID orqali qaytarish` })
   @ApiResponse({ status: 200, type: [Admin] })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
+  @UseGuards(CreateAdminDto)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.adminService.findOneAdminById(+id);
@@ -66,7 +69,8 @@ export class AdminController {
 
   @ApiOperation({ summary: `ID orqali admin'ni tahrirlash` })
   @ApiResponse({ status: 200, type: [Admin] })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminService.updateAdminById(+id, updateAdminDto);
@@ -74,7 +78,8 @@ export class AdminController {
 
   @ApiOperation({ summary: `ID orqali admin'ni o'chirib yuborish` })
   @ApiResponse({ status: 200, type: [Admin] })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
+  @UseGuards(CreateAdminDto)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.adminService.deleteOneAdminById(+id);
