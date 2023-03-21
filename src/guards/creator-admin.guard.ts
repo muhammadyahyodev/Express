@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class CreatorAdminGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   canActivate(
@@ -31,7 +31,11 @@ export class AdminGuard implements CanActivate {
       publicKey: process.env.ACCESS_TOKEN_KEY,
     });
 
-    if (request.body.id !== condidate.sub && !condidate.is_active) {
+    if (
+      request.body.id !== condidate.sub &&
+      !condidate.is_creator &&
+      !condidate.is_active
+    ) {
       throw new ForbiddenException(`Ruxsat berilmadi`);
     }
 
