@@ -110,6 +110,40 @@ export class AdminService {
     return true;
   }
 
+  async refreshToken(req: Request, res: Response) {
+    const { refresh_token } = req.cookies;
+
+    if (!refresh_token) {
+      throw new UnauthorizedException(`Nomzod ro'yhatdan o'tmagan`);
+    }
+
+    const check = await this.jwtService.verify(refresh_token, {
+      publicKey: process.env.REFRESH_TOKEN_KEY,
+    });
+
+    const admin = await this.adminRepository.findByPk(check.sub);
+
+    if (!admin) {
+      throw new UnauthorizedException(`Nomzod ro'yhatdan o'tmagan`);
+    }
+
+    const tokens = await this.getTokens(
+      admin.id,
+      admin.email,
+      admin.is_active,
+      admin.is_creator,
+    );
+
+    await this.updateRefreshTokenHash(admin.id, tokens.refresh_token);
+
+    res.cookie('refresh_token', tokens.refresh_token, {
+      maxAge: 7 * 24 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    return tokens;
+  }
+
   async findAllAdmins() {
     const admins = await this.adminRepository.findAll({});
     return admins;
