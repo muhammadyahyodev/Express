@@ -22,10 +22,9 @@ export class AdminService {
 
   async signUp(createAdminDto: CreateAdminDto, res: Response) {
     const { username, hashed_password } = createAdminDto;
+    await this.findAdminByName(username);
 
     const hashedPassword = await bcrypt.hash(hashed_password, 7);
-
-    await this.findAdminByName(username);
 
     const admin = await this.adminRepositpory.create({
       ...createAdminDto,
