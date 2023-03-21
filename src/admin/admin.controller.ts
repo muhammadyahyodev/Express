@@ -19,6 +19,7 @@ import {
 import { Request, Response } from 'express';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AdminService } from './admin.service';
+import { ActivateDto } from './dto/activate.dto';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { AuthAdminDto } from './dto/signin-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
@@ -55,6 +56,20 @@ export class AdminController {
   @Post('logout')
   logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     return this.adminService.logout(req, res);
+  }
+
+  @ApiOperation({ summary: `Access va Refresh tokenlarni qaytarish` })
+  @ApiResponse({ status: 200, type: [Admin] })
+  @Post('refreshtoken')
+  refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return this.adminService.refreshToken(req, res);
+  }
+
+  @ApiOperation({ summary: 'Admin holatini aktivlashtirish' })
+  @ApiResponse({ status: 200, type: [Admin] })
+  @Get('activate')
+  activate(@Body() activateDto: ActivateDto) {
+    return this.adminService.activation(activateDto);
   }
 
   @ApiOperation({ summary: `Barcha adminlarni qaytarish` })

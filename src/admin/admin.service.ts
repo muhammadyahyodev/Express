@@ -12,6 +12,7 @@ import { AuthAdminDto } from './dto/signin-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { Admin } from './schemas/admin.model';
 import * as bcrypt from 'bcryptjs';
+import { ActivateDto } from './dto/activate.dto';
 
 @Injectable()
 export class AdminService {
@@ -142,6 +143,21 @@ export class AdminService {
     });
 
     return tokens;
+  }
+
+  async activation(activateDto: ActivateDto) {
+    const { value, user_id } = activateDto;
+
+    const user = await this.adminRepository.update(
+      { is_active: value },
+      { where: { id: user_id, is_active: !value }, returning: true },
+    );
+
+    if (!user) {
+      throw new ForbiddenException('Already activated or deactivated');
+    }
+
+    return user[1][0];
   }
 
   async findAllAdmins() {
