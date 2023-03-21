@@ -5,9 +5,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Operation } from './schemas/operation.model';
 import { Admin } from 'src/admin/schemas/admin.model';
 import { Status } from 'src/status/schemas/status.model';
+import { Order } from 'src/order/schemas/order.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Operation, Admin, Status])],
+  imports: [SequelizeModule.forFeature([Operation, Admin, Status, Order])],
   controllers: [OperationController],
   providers: [OperationService],
 })

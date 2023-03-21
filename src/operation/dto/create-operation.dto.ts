@@ -12,6 +12,11 @@ export class CreateOperationDto {
   @IsNumber()
   admin_id: number;
 
+  @ApiProperty({ example: '1' })
+  @IsNotEmpty()
+  @IsNumber()
+  order_id: number;
+
   @ApiProperty({ example: `Bu maydon qo'shimcha ma'lumotlar uchun` })
   @IsString()
   description: string;

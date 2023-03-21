@@ -7,6 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Admin } from 'src/admin/schemas/admin.model';
+import { Order } from 'src/order/schemas/order.model';
 import { Status } from 'src/status/schemas/status.model';
 
 interface CreationOperationAttrs {
@@ -27,10 +28,11 @@ export class Operation extends Model<Operation, CreationOperationAttrs> {
   })
   id: number;
 
+  @ForeignKey(() => Order)
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
   })
-  order_unique_id: string;
+  order_id: number;
 
   @ForeignKey(() => Status)
   @Column({

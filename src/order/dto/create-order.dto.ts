@@ -1,4 +1,4 @@
-import { IsDecimal, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateOrderDto {
   @IsNotEmpty()
@@ -14,12 +14,12 @@ export class CreateOrderDto {
   product_link: string;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   summa: number;
 
   @IsNotEmpty()
   @IsNumber()
-  currency_type: number;
+  currency_type_id: number;
 
   @IsNotEmpty()
   @IsString()

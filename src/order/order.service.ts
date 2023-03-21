@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './schemas/order.model';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class OrderService {
@@ -11,14 +12,17 @@ export class OrderService {
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto) {
-    const order = await this.orderRepository.create(createOrderDto);
+    const uniqueId = uuidv4();
+    const order = await this.orderRepository.create({
+      ...createOrderDto,
+      order_unique_id: uniqueId,
+    });
 
     return order;
   }
 
   async findAllOrders() {
     const orders = await this.orderRepository.findAll();
-
     return orders;
   }
 

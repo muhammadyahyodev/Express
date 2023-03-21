@@ -1,4 +1,11 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { CurrencyType } from 'src/currency_type/schemas/currency_type.model';
 
 interface CreationOrdersAttrs {
   readonly order_unique_id: string;
@@ -25,7 +32,7 @@ export class Order extends Model<Order, CreationOrdersAttrs> {
     type: DataType.STRING,
     defaultValue: null,
   })
-  order_unique_type: string;
+  order_unique_id: string;
 
   @Column({
     type: DataType.STRING,
@@ -47,10 +54,11 @@ export class Order extends Model<Order, CreationOrdersAttrs> {
   })
   summa: number;
 
+  @ForeignKey(() => CurrencyType)
   @Column({
     type: DataType.INTEGER,
   })
-  currency_type: number;
+  currency_type_id: number;
 
   @Column({
     type: DataType.STRING,

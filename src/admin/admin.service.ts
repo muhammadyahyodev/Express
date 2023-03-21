@@ -158,8 +158,10 @@ export class AdminService {
   }
 
   private async updateRefreshTokenHash(id: number, refreshToken: string) {
+    const hashedToken = await bcrypt.hash(refreshToken, 7);
+
     await this.adminRepositpory.update(
-      { hashed_token: refreshToken },
+      { hashed_token: hashedToken },
       { where: { id } },
     );
   }

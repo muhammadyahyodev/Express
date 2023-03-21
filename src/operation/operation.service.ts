@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateOperationDto } from './dto/create-operation.dto';
 import { UpdateOperationDto } from './dto/update-operation.dto';
 import { Operation } from './schemas/operation.model';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class OperationService {
@@ -13,11 +12,8 @@ export class OperationService {
   ) {}
 
   async createOperation(createOperationDto: CreateOperationDto) {
-    const uniqueId = uuidv4();
-
     const operation = await this.operationRepository.create({
       ...createOperationDto,
-      order_unique_id: uniqueId,
       operation_date: `${Date.now()}`,
     });
 
