@@ -67,10 +67,17 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Admin holatini aktivlashtirish' })
   @ApiResponse({ status: 200, type: [Admin] })
-  @Get('activate')
+  @Post('activate')
   activate(@Body() activateDto: ActivateDto) {
     return this.adminService.activation(activateDto);
   }
+
+  // @ApiOperation({ summary: 'Admin creator lavozimini aktivlashtirish' })
+  // @ApiResponse({ status: 200, type: [Admin] })
+  // @Post('creator_active')
+  // activateCreator(@Body() activateDto: ActivateDto) {
+  //   return this.adminService.activateCreator(activateDto);
+  // }
 
   @ApiOperation({ summary: `Barcha adminlarni qaytarish` })
   @ApiResponse({ status: 200, type: [Admin] })

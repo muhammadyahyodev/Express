@@ -146,11 +146,26 @@ export class AdminService {
   }
 
   async activation(activateDto: ActivateDto) {
-    const { value, user_id } = activateDto;
+    const { value, admin_id } = activateDto;
 
     const condidate = await this.adminRepository.update(
       { is_active: value },
-      { where: { id: user_id, is_active: !value }, returning: true },
+      { where: { id: admin_id, is_active: !value }, returning: true },
+    );
+
+    if (!condidate[1][0]) {
+      throw new ForbiddenException(`Allaqachon aktiv yoki aktiv emas`);
+    }
+
+    return condidate[1][0];
+  }
+
+  async activateCreator(activateDto: ActivateDto) {
+    const { value, admin_id } = activateDto;
+
+    const condidate = await this.adminRepository.update(
+      { is_creator: value },
+      { where: { id: admin_id, is_creator: !value }, returning: true },
     );
 
     if (!condidate) {
