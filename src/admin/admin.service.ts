@@ -148,16 +148,16 @@ export class AdminService {
   async activation(activateDto: ActivateDto) {
     const { value, user_id } = activateDto;
 
-    const user = await this.adminRepository.update(
+    const condidate = await this.adminRepository.update(
       { is_active: value },
       { where: { id: user_id, is_active: !value }, returning: true },
     );
 
-    if (!user) {
-      throw new ForbiddenException('Already activated or deactivated');
+    if (!condidate) {
+      throw new ForbiddenException(`Allaqachon aktiv yoki aktiv emas`);
     }
 
-    return user[1][0];
+    return condidate[1][0];
   }
 
   async findAllAdmins() {
