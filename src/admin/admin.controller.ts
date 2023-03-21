@@ -32,7 +32,6 @@ export class AdminController {
 
   @ApiOperation({ summary: `Ro'yhatdan o'tish` })
   @ApiResponse({ status: 200, type: [Admin] })
-  @ApiBearerAuth()
   @Post('signup')
   signUp(
     @Body() createAdminDto: CreateAdminDto,
@@ -53,6 +52,7 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Tizimdan chiqish' })
   @ApiResponse({ status: 200, type: [Admin] })
+  @ApiBearerAuth()
   @Post('logout')
   logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     return this.adminService.logout(req, res);
@@ -60,6 +60,7 @@ export class AdminController {
 
   @ApiOperation({ summary: `Access va Refresh tokenlarni qaytarish` })
   @ApiResponse({ status: 200, type: [Admin] })
+  @ApiBearerAuth()
   @Post('refreshtoken')
   refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     return this.adminService.refreshToken(req, res);
